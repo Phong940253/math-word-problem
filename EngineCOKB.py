@@ -1,3 +1,20 @@
+def KiemTraSuKienTrongTapSuKien(fact, SetOfFacts):
+    for i in range(len((SetOfFacts))):
+        f = SetOfFacts[i]
+        if HopNhatSuKien(f, fact):
+            return True
+    return False
+
+
+def KiemTraTapSuKienTrongTapSuKien(fact1, fact2):
+    count = 0
+    for i in range(len(fact1)):
+        f = fact1[i]
+        if KiemTraSuKienTrongTapSuKien(f, fact2) == True:
+            count += 1
+    return count == len(fact1)
+
+
 def giaiToan(O, F, G):
     Sol = []
     KnowFact = F
@@ -8,15 +25,15 @@ def giaiToan(O, F, G):
     if KiemTraTapSuKienTrongTapSuKien(G, O) or KiemTraSuKienTrongTapSuKien(G, F):
         return "Ket qua da co san trong gia thiet"
 
-    for i in nops(G):
-        if LoaiSuKien(op(i, G)) == 7:
-            KnowFact = KnowFact.union({op(i, G)})
-        elif LoaiSuKien(op(i, G)) == 10:
-            KnowFact = KnowFact.union({lhs(op(i, G)), rhs(op(i, G))})
-        elif LoaiSuKien(op(i, G)) == 12:
-            for j in nops(op(i, G))[2:]:
-                if LoaiSuKien(op(j, op(i, G))) == 7:
-                    KnowFact = KnowFact.union({op(j, op(i, G))})
+    for i in range(len(G)):
+        if LoaiSuKien(G[i]) == 7:
+            KnowFact = KnowFact.union({G[i]})
+        elif LoaiSuKien(G[i]) == 10:
+            KnowFact = KnowFact.union({lhs(G[i]), rhs(G[i])})
+        elif LoaiSuKien(G[i]) == 12:
+            for j in range(1, len(G[i])):
+                if LoaiSuKien(G[i][j]) == 7:
+                    KnowFact = KnowFact.union({G[i][j]})
 
     while flag == True:
         kfact == KnowFact
@@ -49,4 +66,3 @@ def giaiToan(O, F, G):
         print(KnowFact)
     if KiemTraMucTieu(G, KnowFact):
         return ThuGonLoiGiai(Sol, G)
-    return
