@@ -1,5 +1,5 @@
 from pyvi import ViTokenizer, ViPosTagger
 
-text = u" Có 8 bao gạo đựng tất cả 448 kg gạo. Hỏi có 5 bao gạo như thế nặng bao nhiêu kg?"
+text = u"Một cửa hàng ngày thứ nhất bán được 28 lít dầu. Số dầu ngày thứ hai bán được bằng 1/7 số dầu bán được của ngày thứ nhất. Hỏi cả hai ngày cửa hàng bán được bao nhiêu lít dầu?"
 posts = ViPosTagger.postagging(ViTokenizer.tokenize(text))
 print(posts)

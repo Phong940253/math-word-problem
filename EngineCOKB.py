@@ -15,6 +15,29 @@ def KiemTraTapSuKienTrongTapSuKien(fact1, fact2):
     return count == len(fact1)
 
 
+def KiemTraMucTieu(G, KnowFact):
+    count = 0
+    for i in range(len((G))):
+        g = G[i]
+    if LoaiSuKien(g) == 7:
+        for j in range(len((KnowFact))):
+            t = KnowFact[j]
+        if LoaiSuKien(t) = 8 then if HopNhatSuKien(lhs(t), g) then count:
+            = count + 1
+            end if
+            end if
+            end do
+            else if KiemTraSuKienTrongTapSuKien(g, KnowFact) then count:
+                = count + 1
+                end if
+                end if
+                end do
+                if count = nops(G) then return true
+                end if
+                return false
+                end proc
+
+
 def giaiToan(O, F, G):
     Sol = []
     KnowFact = F
@@ -36,8 +59,8 @@ def giaiToan(O, F, G):
                     KnowFact = KnowFact.union({G[i][j]})
 
     while flag == True:
-        kfact == KnowFact
-        temp == RCN1(KnowFact)
+        kfact = KnowFact
+        temp = RCN1(KnowFact)
         KnowFact = KnowFact.union(op(1, temp))
         Sol = [op(Sol), op(op(2, temp))]
         temp = RCN2(currO, KnowFact)
