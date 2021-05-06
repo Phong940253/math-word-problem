@@ -1,11 +1,9 @@
+from fractions import Fraction
 import re
 import string
 from pyvi import ViTokenizer, ViPosTagger
 from copy import deepcopy
-<< << << < HEAD
-== == == =
 # -*- coding: utf-8 -*-
->>>>>> > tien
 
 
 def selectf(F, f):
@@ -90,37 +88,48 @@ class Object:
 
 
 exp = []
+tinh = []
+
+
+def In(i):
+    if type(i) == type(1.2):
+        return str(Fraction(i).limit_denominator(10))
+    return str(i)
 
 
 def cong(a, b, c):
     global exp
     if a.checkNone():
+        tinh.append(a.name)
         a.value = b + c
-        exp.append(str(b.value) + " + " + str(c.value) + " = " + str(a.value))
+        exp.append(In(b.value) + " + " + In(c.value) + " = " + In(a.value))
     return [a, b, c]
 
 
 def tru(a, b, c):
     global exp
     if a.checkNone():
+        tinh.append(a.name)
         a.value = b - c
-        exp.append(str(b.value) + " - " + str(c.value) + " = " + str(a.value))
+        exp.append(In(b.value) + " - " + In(c.value) + " = " + In(a.value))
     return [a, b, c]
 
 
 def nhan(a, b, c):
     global exp
     if a.checkNone():
+        tinh.append(a.name)
         a.value = b * c
-        exp.append(str(b.value) + " * " + str(c.value) + " = " + str(a.value))
+        exp.append(In(b.value) + " * " + In(c.value) + " = " + In(a.value))
     return [a, b, c]
 
 
 def chia(a, b, c):
     global exp
     if a.checkNone():
+        tinh.append(a.name)
         a.value = b / c
-        exp.append(str(b.value) + " / " + str(c.value) + " = " + str(a.value))
+        exp.append(In(b.value) + " / " + In(c.value) + " = " + In(a.value))
     return [a, b, c]
 
 
@@ -229,6 +238,12 @@ M = [a, b, c, d, e, f, g]
 
 # caculate(OptSol, M, exp)
 
+def convertFrac(str):
+    x = str.split("/")
+    if len(x) > 1:
+        return int(x[0]) / int(x[1])
+    return int(x[0])
+
 
 class Engine:
     minDeep = 100000
@@ -236,18 +251,117 @@ class Engine:
     F = [f1, f2, f3, f4, f5]
     M = [a, b, c, d, e, f, g]
     IsSol = False
+    A = []
+    B = []
+    res = ""
 
-    def __init__(self, A, B):
-        self.A = A
-        self.B = B
+    def __init__(self, text):
         global exp
         self.exp = exp
         self.exp.clear()
+        regex1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(\d+)\s*((?:\w|\s)+)"
+        regex2 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*(?:bằng|gấp)\s*((?:\d+/\d+)|\d+)\s*(?:lần)*\s*(?:số|Số)*((?:\w|\s)*)"
+        regex3 = r"(?:Hỏi)*(?:\w|\s|-)*(?:cả)+(?:\w|\s|)*(?:bao nhiêu)\s*((?:\w|\s|-)+)"
+        regex4 = r"((?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về))"
+        regext = [regex1, regex2]
+        text = re.sub(r"một ", "1 ", text)
+        text = re.sub(r"hai ", "2 ", text)
+        text = re.sub(r"ba ", "3 ", text)
+        text = re.sub(r"bốn ", "4 ", text)
+        text = re.sub(r"năm ", "5 ", text)
+        text = re.sub(r"sáu ", "6 ", text)
+        text = re.sub(r"bảy ", "7 ", text)
+        text = re.sub(r"tám ", "8 ", text)
+        text = re.sub(r"chín ", "9 ", text)
+        self.res = "TÓM TẮT:\n"
+        for regex in regext:
+            matches = re.finditer(regex, text, re.MULTILINE)
+
+            for matchNum, match in enumerate(matches, start=1):
+                if regex == regex1:
+                    ve1 = text[:match.start()].strip()
+                    self.res += ve1 + ": "
+                # print("Match {matchNum} was found at {start}-{end}: {match}".format(
+                    # matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
+
+                if regex == regex2:
+                    if len(match.group()) > 2:
+                        findOb1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*\s*((?:\w|\s)+)"
+                        matches1 = re.finditer(
+                            findOb1, match.group(1), re.MULTILINE)
+                        for matchNum1, match1 in enumerate(matches1, start=1):
+                            Object1 = match.group()[:match1.start()]
+                            Object1 = re.sub(r"Số ", "", Object1)
+                            Object1 = re.sub(r"số", "", Object1)
+                            Object1 = re.sub(DonVi, "", Object1)
+                            Object1 = Object1.strip()
+                            self.res += Object1 + " = "
+                        self.res += match.group(2) + " lần "
+                        findOb2 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(?:vào)*\s*((?:\w|\s)*)"
+                        matches1 = re.finditer(
+                            findOb2, match.group(3), re.MULTILINE)
+                        for matchNum1, match1 in enumerate(matches1, start=1):
+                            Object2 = match1.group(1).strip()
+                            if Object2 == "":
+                                Object2 = match.group(3)[:match1.start()]
+                            test1 = DonVi.split(" ")
+                            for i in test1:
+                                Object2 = re.sub(i, "", Object2)
+                            if Object2 == "":
+                                Object2 = match.group(3)
+                            Object2 = Object2.strip()
+                            self.res += Object2 + " "
+
+                        if Object1.lower() in ve1.lower():
+                            e = Object("e")
+                        else:
+                            e = Object("f")
+                        e.value = convertFrac(match.group(2))
+                        self.A.append(e)
+
+                if regex == regex1:
+                    for groupNum in range(0, len(match.groups())):
+                        groupNum = groupNum + 1
+                        self.res += match.group(groupNum) + " "
+
+                if regex == regex1:
+                    if len(match.group()) > 2:
+                        a = Object("a")
+                        a.value = int(match.group(1))
+                        self.A.append(a)
+                        DonVi = match.group(2)
+                # if regex == regex2:
+                #     print(match.group(1))
+                self.res += "\n"
+        matches = re.finditer(regex3, text, re.MULTILINE)
+        for matchNum, match in enumerate(matches, start=1):
+            c = Object("c")
+            self.B.append(c)
+            self.res += Object1 + " và " + Object2 + \
+                ": ? " + match.group(1) + "\n\nBÀI GIẢI:\n"
+
+        matches = re.finditer(regex4, text, re.MULTILINE)
+        for matchNum, match in enumerate(matches, start=1):
+            HanhDong = match.group(1)
+
         fs = [False for x in range(len(self.F))]
         self.find_good_soltion(self.B, fs, [], 0)
         self.OptSol.reverse()
         self.IsSol = len(self.OptSol) > 0
-        self.caculate(A)
+        self.caculate(self.A)
+
+        for ind, i in enumerate(tinh):
+            if i == "a":
+                pass
+            elif i == "b":
+                self.res += "Số " + DonVi + " " + Object1 + " " + HanhDong + " là:\n"
+                self.res += "    " + self.exp[ind] + "\n"
+            elif i == "c":
+                self.res += "Số " + DonVi + " " + Object1 + \
+                    " và " + Object2 + " " + HanhDong + " là:\n"
+                self.res += "    " + self.exp[ind] + "\n"
+                self.res += "        " + "Đáp số: " + \
+                    self.exp[-1][self.exp[-1].rfind(" ") + 1:] + " " + DonVi
 
     def find_good_soltion(self, B, check, Sol, deep):
 
@@ -255,12 +369,7 @@ class Engine:
             self.OptSol = Sol
             self.minDeep = deep
 
-
-<< << << < HEAD
-        if (checkCon(B, A)):
-== == == =
         if (checkCon(B, self.A)):
->>>>>> > tien
             if deep < self.minDeep:
                 self.OptSol = Sol
                 self.minDeep = deep
@@ -286,7 +395,6 @@ class Engine:
             MM = i.getValue(MM)
 
 
-
 # aa = Object('a')
 # bb = Object('c')
 # dd = Object('d')
@@ -296,74 +404,16 @@ class Engine:
 # B = [dd]
 # engine = Engine(A, B)
 # print(engine.exp)
-# text = u"Đàn gà có 15 gà trống, số gà mái gấp 4 lần số gà trống. Hỏi đàn gà có tất cả bao nhiêu con?"
-# posts = ViPosTagger.postagging(ViTokenizer.tokenize(text))
-# print(posts)
-
-# NP = set()
 
 
-def tach(text):
-    res = []
-    str = ""
-    for i, v in enumerate(text):
-
-        if v == "." or v == ",":
-            res.append(str.strip())
-            str = ""
-        else:
-            str += v
-    if (str != ""):
-        res.append(str.strip())
-    return res
+test_str = ["Một cửa hàng buổi sáng bán được 13 kg đường. Buổi sáng bán được số đường gấp ba lần số đường bán được vào buổi chiều. Hỏi cả hai buổi cửa hàng bán được bao nhiêu ki-lô-gam đường?",
+            "Mỹ hái được 38 bông hoa. Số bông hoa Linh hái được bằng 1/2 số hoa Mỹ hái được. Hỏi hai bạn hái được tất cả bao nhiêu bông hoa?",
+            "Mỹ hái được 4 bông hoa. Số bông hoa Linh hái được gấp sáu lần số hoa Mỹ hái được. Hỏi hai bạn hái được tất cả bao nhiêu bông hoa?",
+            "Mai có 9 nhãn vở, An có số nhãn vở gấp năm lần số nhãn vở của Mai. Hỏi cả hai bạn có tất cả bao nhiêu cái nhãn vở?"]
 
 
-# new_text = tach(text)
-# if "tất cả" in new_text[-1].lower() or "cả" in new_text[-1].lower():
-#     cc = Object('c')
-#     B = [cc]
-# print(cc.name)
-
-regex1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(\d+)\s*((?:\w|\s)+)"
-regex2 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*(?:bằng|gấp)\s*((?:\d+/\d+)|\d+)\s*(?:lần)*\s*(?:số|Số)*((?:\w|\s)*)"
-regext = [regex1, regex2]
-
-test_str = ["Một cửa hàng buổi sáng bán được 13 kg đường. Buổi chiều bán được số đường gấp ba lần số đường bán được vào buổi sáng. Hỏi cả hai buổi cửa hàng bán được bao nhiêu ki-lô-gam đường?",
-            "Băng giấy đỏ dài 25 cm, băng giấy xanh ngắn hơn băng giấy đỏ 14 cm. Hỏi cả hai băng giấy dài bao nhiêu xăng-ti-mét?"]
-
-for index, i in enumerate(test_str):
-    i = re.sub(r"một ", "1 ", i)
-    i = re.sub(r"hai ", "2 ", i)
-    i = re.sub(r"ba ", "3 ", i)
-    i = re.sub(r"bốn ", "4 ", i)
-    i = re.sub(r"năm ", "5 ", i)
-    i = re.sub(r"sáu ", "6 ", i)
-    i = re.sub(r"bảy ", "7 ", i)
-    i = re.sub(r"tám ", "8 ", i)
-    i = re.sub(r"chín ", "9 ", i)
-    test_str[index] = i
-
-print(test_str)
-
-for test in test_str:
-    for regex in regext:
-
-        matches = re.finditer(regex, test, re.MULTILINE)
-
-        for matchNum, match in enumerate(matches, start=1):
-            if regex == regex1:
-                print(test[:match.start()] + ": ", end="")
-            # print("Match {matchNum} was found at {start}-{end}: {match}".format(
-                # matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
-
-            # if regex == regex1:
-            for groupNum in range(0, len(match.groups())):
-                groupNum = groupNum + 1
-
-                print(match.group(groupNum), end=" ")
-            # if regex == regex2:
-            #     print(match.group(1))
-            print()
+engine = Engine(test_str[2])
+print(engine.res)
 # Note: for Python 2.7 compatibility, use ur"" to prefix the regex and u"" to prefix the test string and substitution.
 
 # i = 0
