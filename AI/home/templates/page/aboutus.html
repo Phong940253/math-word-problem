@@ -1,0 +1,38 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Math Word</title>
+    <!-- Bootstrap core CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <div class="container">
+            <a href="{% url 'home' %}">
+                <button class="btn btn-primary my-2">Trang chủ</button>
+            </a>
+            <a href="{% url 'thread' %}">
+                <button class="btn btn-primary my-2">Đề mẫu</button>
+            </a>
+            <a href="{% url 'about' %}">
+                <button class="btn btn-primary my-2">Chúng tôi</button>
+            </a>
+        </div>
+    </head>
+
+    <body>
+        <main role="main">
+            
+            <section class="jumbotron text-center">
+            <h1 class="jumbotron-heading">Thành viên:</h1>
+              <div class="container">
+                <ul><h4>1. Lê Văn Trung</h4></ul>
+                <ul><h4>2. Nguyễn Văn Phong</h4></ul>
+                <ul><h4>3. Phan Minh Tiến</h4></ul>
+                <ul><h4>4. Lê Văn Trung</h4></ul>
+                <ul><h4>5. Trần Minh Tâm</h4></ul>
+              </div>
+            </section>
+        </main>
+    </body>
+    

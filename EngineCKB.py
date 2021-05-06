@@ -1,4 +1,11 @@
+import re
+import string
+from pyvi import ViTokenizer, ViPosTagger
 from copy import deepcopy
+<< << << < HEAD
+== == == =
+# -*- coding: utf-8 -*-
+>>>>>> > tien
 
 
 def selectf(F, f):
@@ -247,7 +254,13 @@ class Engine:
         if B == []:
             self.OptSol = Sol
             self.minDeep = deep
+
+
+<< << << < HEAD
         if (checkCon(B, A)):
+== == == =
+        if (checkCon(B, self.A)):
+>>>>>> > tien
             if deep < self.minDeep:
                 self.OptSol = Sol
                 self.minDeep = deep
@@ -273,12 +286,100 @@ class Engine:
             MM = i.getValue(MM)
 
 
-aa = Object('a')
-bb = Object('c')
-dd = Object('d')
-aa.value = 1
-bb.value = 6
-A = [aa, bb]
-B = [dd]
-engine = Engine(A, B)
-print(engine.exp)
+
+# aa = Object('a')
+# bb = Object('c')
+# dd = Object('d')
+# aa.value = 1
+# bb.value = 6
+# A = [aa, bb]
+# B = [dd]
+# engine = Engine(A, B)
+# print(engine.exp)
+# text = u"Đàn gà có 15 gà trống, số gà mái gấp 4 lần số gà trống. Hỏi đàn gà có tất cả bao nhiêu con?"
+# posts = ViPosTagger.postagging(ViTokenizer.tokenize(text))
+# print(posts)
+
+# NP = set()
+
+
+def tach(text):
+    res = []
+    str = ""
+    for i, v in enumerate(text):
+
+        if v == "." or v == ",":
+            res.append(str.strip())
+            str = ""
+        else:
+            str += v
+    if (str != ""):
+        res.append(str.strip())
+    return res
+
+
+# new_text = tach(text)
+# if "tất cả" in new_text[-1].lower() or "cả" in new_text[-1].lower():
+#     cc = Object('c')
+#     B = [cc]
+# print(cc.name)
+
+regex1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(\d+)\s*((?:\w|\s)+)"
+regex2 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*(?:bằng|gấp)\s*((?:\d+/\d+)|\d+)\s*(?:lần)*\s*(?:số|Số)*((?:\w|\s)*)"
+regext = [regex1, regex2]
+
+test_str = ["Một cửa hàng buổi sáng bán được 13 kg đường. Buổi chiều bán được số đường gấp ba lần số đường bán được vào buổi sáng. Hỏi cả hai buổi cửa hàng bán được bao nhiêu ki-lô-gam đường?",
+            "Băng giấy đỏ dài 25 cm, băng giấy xanh ngắn hơn băng giấy đỏ 14 cm. Hỏi cả hai băng giấy dài bao nhiêu xăng-ti-mét?"]
+
+for index, i in enumerate(test_str):
+    i = re.sub(r"một ", "1 ", i)
+    i = re.sub(r"hai ", "2 ", i)
+    i = re.sub(r"ba ", "3 ", i)
+    i = re.sub(r"bốn ", "4 ", i)
+    i = re.sub(r"năm ", "5 ", i)
+    i = re.sub(r"sáu ", "6 ", i)
+    i = re.sub(r"bảy ", "7 ", i)
+    i = re.sub(r"tám ", "8 ", i)
+    i = re.sub(r"chín ", "9 ", i)
+    test_str[index] = i
+
+print(test_str)
+
+for test in test_str:
+    for regex in regext:
+
+        matches = re.finditer(regex, test, re.MULTILINE)
+
+        for matchNum, match in enumerate(matches, start=1):
+            if regex == regex1:
+                print(test[:match.start()] + ": ", end="")
+            # print("Match {matchNum} was found at {start}-{end}: {match}".format(
+                # matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
+
+            # if regex == regex1:
+            for groupNum in range(0, len(match.groups())):
+                groupNum = groupNum + 1
+
+                print(match.group(groupNum), end=" ")
+            # if regex == regex2:
+            #     print(match.group(1))
+            print()
+# Note: for Python 2.7 compatibility, use ur"" to prefix the regex and u"" to prefix the test string and substitution.
+
+# i = 0
+# while i < len(posts[1]):
+#     if posts[1][i] == "Np":
+#         NP.add(posts[0][i])
+#     object = ""
+#     while "N" in posts[1][i]:
+#         object += posts[0][i] + " "
+#         i += 1
+#     if len(re.findall(r'\w+', object)) > 1:
+#         tt = object.lower()
+#         tt = string.capwords(tt[0]) + tt[1:]
+#         NP.add(tt)
+#     i += 1
+# print(NP)
+# NNA
+# Np
+# NN
