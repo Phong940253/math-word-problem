@@ -165,6 +165,13 @@ def re5(a, b, g):
     return [a, b, g]
 
 
+def re6(a, b, h):
+    a, b, h = tru(a, b, h)
+    b, a, h = cong(b, h, a)
+    h, b, a = tru(h, b, a)
+    return [a, b, h]
+
+
 class Function:
     name = None
 
@@ -216,17 +223,19 @@ d = Object("d")
 e = Object("e")
 f = Object("f")
 g = Object("g")
+h = Object("h")
 
 f1 = Function([a, b, e], "f1", re1)
 f2 = Function([a, b, f], "f2", re2)
 f3 = Function([a, b, c], "f3", re3)
 f4 = Function([a, b, d], "f4", re4)
 f5 = Function([a, b, g], "f5", re5)
+f6 = Function([a, b, h], "f6", re6)
 
 
-F = [f1, f2, f3, f4, f5]
+F = [f1, f2, f3, f4, f5, f6]
 
-M = [a, b, c, d, e, f, g]
+M = [a, b, c, d, e, f, g, h]
 
 
 # for i in f3.getListOutput(A):
@@ -248,120 +257,191 @@ def convertFrac(str):
 class Engine:
     minDeep = 100000
     OptSol = []
-    F = [f1, f2, f3, f4, f5]
-    M = [a, b, c, d, e, f, g]
+    F = [f1, f2, f3, f4, f5, f6]
+    M = [a, b, c, d, e, f, g, h]
     IsSol = False
     A = []
     B = []
     res = ""
 
     def __init__(self, text):
-        global exp
-        self.exp = exp
-        self.exp.clear()
-        regex1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(\d+)\s*((?:\w|\s)+)"
-        regex2 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*(?:bằng|gấp)\s*((?:\d+/\d+)|\d+)\s*(?:lần)*\s*(?:số|Số)*((?:\w|\s)*)"
-        regex3 = r"(?:Hỏi)*(?:\w|\s|-)*(?:cả)+(?:\w|\s|)*(?:bao nhiêu)\s*((?:\w|\s|-)+)"
-        regex4 = r"((?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về))"
-        regext = [regex1, regex2]
-        text = re.sub(r"một ", "1 ", text)
-        text = re.sub(r"hai ", "2 ", text)
-        text = re.sub(r"ba ", "3 ", text)
-        text = re.sub(r"bốn ", "4 ", text)
-        text = re.sub(r"năm ", "5 ", text)
-        text = re.sub(r"sáu ", "6 ", text)
-        text = re.sub(r"bảy ", "7 ", text)
-        text = re.sub(r"tám ", "8 ", text)
-        text = re.sub(r"chín ", "9 ", text)
-        self.res = "TÓM TẮT:\n"
-        for regex in regext:
-            matches = re.finditer(regex, text, re.MULTILINE)
-
+        try:
+            global exp
+            global tinh
+            self.tinh = tinh
+            self.tinh.clear()
+            self.exp = exp
+            self.exp.clear()
+            self.A = []
+            self.B = []
+            self.res = ""
+            regex1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(\d+)\s*((?:\w|\s)+)"
+            regex2 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*(?:bằng|gấp)\s*((?:\d+/\d+)|\d+)\s*(?:lần)*\s*(?:số|Số)*((?:\w|\s)*)"
+            regex3 = r"(?:Hỏi)*(?:\w|\s|-)*(?:cả)+(?:\w|\s|)*(?:bao nhiêu)\s*((?:\w|\s|-)+)"
+            regex4 = r"((?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về))"
+            regex5 = r"((?:số|Số)*(?:\w|\s)*)(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)*\s*((?:nhiều hơn|ít hơn|dài hơn|ngắn hơn)+)\s*(?:số|Số)*\s((?:\w|\s)*)\s((?:\d+/\d+)|\d+)\s*((?:\w|\s)*)"
+            regext = [regex1, regex2, regex5]
+            text = re.sub(r"một ", "1 ", text)
+            text = re.sub(r"hai ", "2 ", text)
+            text = re.sub(r"ba ", "3 ", text)
+            text = re.sub(r"bốn ", "4 ", text)
+            text = re.sub(r"năm ", "5 ", text)
+            text = re.sub(r"sáu ", "6 ", text)
+            text = re.sub(r"bảy ", "7 ", text)
+            text = re.sub(r"tám ", "8 ", text)
+            text = re.sub(r"chín ", "9 ", text)
+            self.res = "TÓM TẮT:\n"
+            matches = re.finditer(regex4, text, re.MULTILINE)
             for matchNum, match in enumerate(matches, start=1):
-                if regex == regex1:
-                    ve1 = text[:match.start()].strip()
-                    self.res += ve1 + ": "
-                # print("Match {matchNum} was found at {start}-{end}: {match}".format(
-                    # matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
+                HanhDong = match.group(1).strip()
+            for regex in regext:
+                matches = re.finditer(regex, text, re.MULTILINE)
 
-                if regex == regex2:
-                    if len(match.group()) > 2:
-                        findOb1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*\s*((?:\w|\s)+)"
-                        matches1 = re.finditer(
-                            findOb1, match.group(1), re.MULTILINE)
-                        for matchNum1, match1 in enumerate(matches1, start=1):
-                            Object1 = match.group()[:match1.start()]
+                for matchNum, match in enumerate(matches, start=1):
+                    if regex == regex1:
+                        ve1 = text[:match.start()].strip()
+                        self.res += ve1 + ": "
+                    # print("Match {matchNum} was found at {start}-{end}: {match}".format(
+                        # matchNum=matchNum, start=match.start(), end=match.end(), match=match.group()))
+
+                    if regex == regex2:
+                        if len(match.group()) > 2:
+                            findOb1 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*\s*((?:\w|\s)+)"
+                            matches1 = re.finditer(
+                                findOb1, match.group(1), re.MULTILINE)
+                            for matchNum1, match1 in enumerate(matches1, start=1):
+                                Object1 = match.group()[:match1.start()]
+                                Object1 = re.sub(r"Số ", "", Object1)
+                                Object1 = re.sub(r"số", "", Object1)
+                                Object1 = re.sub(DonVi, "", Object1)
+                                test1 = DonVi.split(" ")
+                                for i in test1:
+                                    Object1 = re.sub(i, "", Object1)
+                                Object1 = Object1.strip()
+                                self.res += Object1 + " = "
+                            self.res += match.group(2) + " lần "
+                            findOb2 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(?:vào)*\s*((?:\w|\s)*)"
+                            matches1 = re.finditer(
+                                findOb2, match.group(3), re.MULTILINE)
+                            for matchNum1, match1 in enumerate(matches1, start=1):
+                                Object2 = match1.group(1).strip()
+                                if Object2 == "":
+                                    Object2 = match.group(3)[:match1.start()]
+                                test1 = DonVi.split(" ")
+                                for i in test1:
+                                    Object2 = re.sub(i, "", Object2)
+                                if Object2 == "":
+                                    Object2 = match.group(3)
+                                Object2 = re.sub(r"của", "", Object2)
+                                Object2 = Object2.strip()
+                                self.res += Object2 + " "
+
+                            if Object1.lower() in ve1.lower():
+                                e = Object("e")
+                            else:
+                                e = Object("f")
+                            e.value = convertFrac(match.group(2))
+                            self.A.append(e)
+
+                    if regex == regex1:
+                        for groupNum in range(0, len(match.groups())):
+                            groupNum = groupNum + 1
+                            self.res += match.group(groupNum) + " "
+
+                    if regex == regex1:
+                        if len(match.group()) > 2:
+                            a = Object("a")
+                            a.value = int(match.group(1))
+                            self.A.append(a)
+                            DonVi = match.group(2)
+                    # if regex == regex2:
+                    #     print(match.group(1))
+                    self.res += "\n"
+
+                    if regex == regex5:
+                        if len(match.group()) > 2:
+                            self.res = self.res[:-1]
+                            Object1 = match.group(1)
                             Object1 = re.sub(r"Số ", "", Object1)
                             Object1 = re.sub(r"số", "", Object1)
                             Object1 = re.sub(DonVi, "", Object1)
+                            test1 = DonVi.split(" ")
+                            for i in test1:
+                                Object1 = re.sub(i, "", Object1)
+                            test1 = HanhDong.split(" ")
+                            for i in test1:
+                                Object1 = re.sub(i, "", Object1)
                             Object1 = Object1.strip()
                             self.res += Object1 + " = "
-                        self.res += match.group(2) + " lần "
-                        findOb2 = r"(?:bán|hái|gấp|mua|chở|trồng|đựng|)*\s*(?:được|có|dài|hết|về)+\s*(?:vào)*\s*((?:\w|\s)*)"
-                        matches1 = re.finditer(
-                            findOb2, match.group(3), re.MULTILINE)
-                        for matchNum1, match1 in enumerate(matches1, start=1):
-                            Object2 = match1.group(1).strip()
-                            if Object2 == "":
-                                Object2 = match.group(3)[:match1.start()]
+                            print(match.group(3))
+                            Object2 = match.group(3).strip()
+                            # if Object2 == "":
+                            #     Object2 = match.group(3)[:match1.start()]
                             test1 = DonVi.split(" ")
                             for i in test1:
                                 Object2 = re.sub(i, "", Object2)
-                            if Object2 == "":
-                                Object2 = match.group(3)
+                            test1 = HanhDong.split(" ")
+                            for i in test1:
+                                Object2 = re.sub(i, "", Object2)
+                            Object2 = re.sub(r"của", "", Object2)
+                            Object2 = re.sub(r"là", "", Object2)
+                            Object2 = re.sub(r"trong", "", Object2)
                             Object2 = Object2.strip()
                             self.res += Object2 + " "
 
-                        if Object1.lower() in ve1.lower():
-                            e = Object("e")
-                        else:
-                            e = Object("f")
-                        e.value = convertFrac(match.group(2))
-                        self.A.append(e)
+                            if Object1.lower() in ve1.lower():
+                                if "nhiều hơn" in match.group(2) or "dài hơn" in match.group(2):
+                                    d = Object("d")
+                                    self.res += " + " + \
+                                        match.group(4) + " " + DonVi
+                                    d.value = (int(match.group(4)))
+                                else:
+                                    self.res += " - " + \
+                                        match.group(4) + " " + DonVi
+                                    d = Object("h")
+                                    d.value = int(match.group(4))
+                            else:
+                                if "nhiều hơn" in match.group(2) or "dài hơn" in match.group(2):
+                                    d = Object("h")
+                                    self.res += " + " + \
+                                        match.group(4) + " " + DonVi
+                                    d.value = int(match.group(4))
+                                else:
+                                    self.res += " - " + \
+                                        match.group(4) + " " + DonVi
+                                    d = Object("d")
+                                    d.value = int(match.group(4))
 
-                if regex == regex1:
-                    for groupNum in range(0, len(match.groups())):
-                        groupNum = groupNum + 1
-                        self.res += match.group(groupNum) + " "
+                            self.res += "\n"
+                            self.A.append(d)
+            matches = re.finditer(regex3, text, re.MULTILINE)
+            for matchNum, match in enumerate(matches, start=1):
+                c = Object("c")
+                self.B.append(c)
+                self.res += Object1 + " và " + Object2 + \
+                    ": ? " + match.group(1) + "\n\nBÀI GIẢI:\n"
 
-                if regex == regex1:
-                    if len(match.group()) > 2:
-                        a = Object("a")
-                        a.value = int(match.group(1))
-                        self.A.append(a)
-                        DonVi = match.group(2)
-                # if regex == regex2:
-                #     print(match.group(1))
-                self.res += "\n"
-        matches = re.finditer(regex3, text, re.MULTILINE)
-        for matchNum, match in enumerate(matches, start=1):
-            c = Object("c")
-            self.B.append(c)
-            self.res += Object1 + " và " + Object2 + \
-                ": ? " + match.group(1) + "\n\nBÀI GIẢI:\n"
+            fs = [False for x in range(len(self.F))]
+            self.find_good_soltion(self.B, fs, [], 0)
+            self.OptSol.reverse()
+            self.IsSol = len(self.OptSol) > 0
+            self.caculate(self.A)
 
-        matches = re.finditer(regex4, text, re.MULTILINE)
-        for matchNum, match in enumerate(matches, start=1):
-            HanhDong = match.group(1)
-
-        fs = [False for x in range(len(self.F))]
-        self.find_good_soltion(self.B, fs, [], 0)
-        self.OptSol.reverse()
-        self.IsSol = len(self.OptSol) > 0
-        self.caculate(self.A)
-
-        for ind, i in enumerate(tinh):
-            if i == "a":
-                pass
-            elif i == "b":
-                self.res += "Số " + DonVi + " " + Object1 + " " + HanhDong + " là:\n"
-                self.res += "    " + self.exp[ind] + "\n"
-            elif i == "c":
-                self.res += "Số " + DonVi + " " + Object1 + \
-                    " và " + Object2 + " " + HanhDong + " là:\n"
-                self.res += "    " + self.exp[ind] + "\n"
-                self.res += "        " + "Đáp số: " + \
-                    self.exp[-1][self.exp[-1].rfind(" ") + 1:] + " " + DonVi
+            for ind, i in enumerate(self.tinh):
+                if i == "a":
+                    pass
+                elif i == "b":
+                    self.res += "Số " + DonVi + " " + Object2 + " " + HanhDong + " là:\n"
+                    self.res += "    " + self.exp[ind] + "\n"
+                elif i == "c":
+                    self.res += "Số " + DonVi + " " + Object1 + \
+                        " và " + Object2 + " " + HanhDong + " là:\n"
+                    self.res += "    " + self.exp[ind] + "\n"
+                    self.res += "        " + "Đáp số: " + \
+                        self.exp[-1][self.exp[-1].rfind(" ") + 1:] + \
+                        " " + DonVi
+        except Exception:
+            self.res = "Không thể giải"
 
     def find_good_soltion(self, B, check, Sol, deep):
 
@@ -406,14 +486,6 @@ class Engine:
 # print(engine.exp)
 
 
-test_str = ["Một cửa hàng buổi sáng bán được 13 kg đường. Buổi sáng bán được số đường gấp ba lần số đường bán được vào buổi chiều. Hỏi cả hai buổi cửa hàng bán được bao nhiêu ki-lô-gam đường?",
-            "Mỹ hái được 38 bông hoa. Số bông hoa Linh hái được bằng 1/2 số hoa Mỹ hái được. Hỏi hai bạn hái được tất cả bao nhiêu bông hoa?",
-            "Mỹ hái được 4 bông hoa. Số bông hoa Linh hái được gấp sáu lần số hoa Mỹ hái được. Hỏi hai bạn hái được tất cả bao nhiêu bông hoa?",
-            "Mai có 9 nhãn vở, An có số nhãn vở gấp năm lần số nhãn vở của Mai. Hỏi cả hai bạn có tất cả bao nhiêu cái nhãn vở?"]
-
-
-engine = Engine(test_str[2])
-print(engine.res)
 # Note: for Python 2.7 compatibility, use ur"" to prefix the regex and u"" to prefix the test string and substitution.
 
 # i = 0
