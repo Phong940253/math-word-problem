@@ -289,7 +289,7 @@ class Engine:
             text = re.sub(r"bảy ", "7 ", text)
             text = re.sub(r"tám ", "8 ", text)
             text = re.sub(r"chín ", "9 ", text)
-            self.res = "TÓM TẮT:<br>"
+            self.res = "TÓM TẮT:\n"
             matches = re.finditer(regex4, text, re.MULTILINE)
             for matchNum, match in enumerate(matches, start=1):
                 HanhDong = match.group(1).strip()
@@ -355,11 +355,11 @@ class Engine:
                             DonVi = match.group(2)
                     # if regex == regex2:
                     #     print(match.group(1))
-                    self.res += "<br>"
+                    self.res += "\n"
 
                     if regex == regex5:
                         if len(match.group()) > 2:
-                            self.res = self.res[:-4]
+                            self.res = self.res[:-1]
                             Object1 = match.group(1)
                             Object1 = re.sub(r"Số ", "", Object1)
                             Object1 = re.sub(r"số", "", Object1)
@@ -372,7 +372,7 @@ class Engine:
                                 Object1 = re.sub(i, "", Object1)
                             Object1 = Object1.strip()
                             self.res += Object1 + " = "
-                            # self.res += match.group(3)
+                            print(match.group(3))
                             Object2 = match.group(3).strip()
                             # if Object2 == "":
                             #     Object2 = match.group(3)[:match1.start()]
@@ -411,17 +411,14 @@ class Engine:
                                     d = Object("d")
                                     d.value = int(match.group(4))
 
-                            self.res += "<br>"
+                            self.res += "\n"
                             self.A.append(d)
-            print(ve1)
-            if Object2.lower() in ve1.lower():
-                Object1, Object2 = Object2, Object1
             matches = re.finditer(regex3, text, re.MULTILINE)
             for matchNum, match in enumerate(matches, start=1):
                 c = Object("c")
                 self.B.append(c)
                 self.res += Object1 + " và " + Object2 + \
-                    ": ? " + match.group(1) + "<br><br>BÀI GIẢI:<br>"
+                    ": ? " + match.group(1) + "\n\nBÀI GIẢI:\n"
 
             fs = [False for x in range(len(self.F))]
             self.find_good_soltion(self.B, fs, [], 0)
@@ -433,12 +430,12 @@ class Engine:
                 if i == "a":
                     pass
                 elif i == "b":
-                    self.res += "Số " + DonVi + " " + Object2 + " " + HanhDong + " là:<br>"
-                    self.res += "    " + self.exp[ind] + "<br>"
+                    self.res += "Số " + DonVi + " " + Object2 + " " + HanhDong + " là:\n"
+                    self.res += "    " + self.exp[ind] + "\n"
                 elif i == "c":
                     self.res += "Số " + DonVi + " " + Object1 + \
-                        " và " + Object2 + " " + HanhDong + " là:<br>"
-                    self.res += "    " + self.exp[ind] + "<br>"
+                        " và " + Object2 + " " + HanhDong + " là:\n"
+                    self.res += "    " + self.exp[ind] + "\n"
                     self.res += "        " + "Đáp số: " + \
                         self.exp[-1][self.exp[-1].rfind(" ") + 1:] + \
                         " " + DonVi
@@ -475,6 +472,7 @@ class Engine:
                     break
         for i in self.OptSol:
             MM = i.getValue(MM)
+
 
 # aa = Object('a')
 # bb = Object('c')
