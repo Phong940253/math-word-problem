@@ -1,7 +1,6 @@
 from fractions import Fraction
 import re
 import string
-from pyvi import ViTokenizer, ViPosTagger
 from copy import deepcopy
 # -*- coding: utf-8 -*-
 

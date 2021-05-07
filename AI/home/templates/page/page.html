@@ -20,17 +20,17 @@
     </div>
   </head>
   <body>
-
 <main role="main">
-
   <section class="jumbotron text-center">
     <div class="container">
       <h1 class="jumbotron-heading">Solve Math Word</h1>
       <p class="lead text-muted">Hãy nhập bài toán của bạn vào đây!</p>
-      <form method="POST">
+      <form method="POST" action="result/">
       <div class="input-group mb-3">
+          {% csrf_token %}
           <input type="text" name="search" class="form-control" aria-label="Username">
       </div>
+    
       <p>
         <button type="submit" name="submit" value="search" class="btn btn-primary my-2">Solve</button>
         <button type="submit" name="submit" value="lucky" class="btn btn-secondary my-2">Search More</button>
