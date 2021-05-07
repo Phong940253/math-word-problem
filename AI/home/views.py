@@ -1,8 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .EngineCKB import Engine
-from .forms import Search
-from . import forms
+
 
 # Create your views here.
 
